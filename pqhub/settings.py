@@ -242,14 +242,14 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Mail settings for smtp
-# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-# EMAIL_HOST = 'smtp.gmail.com'  # Specify your SMTP server
-# EMAIL_PORT = 587  # Port for sending emails (use 587 for TLS, 465 for SSL)
-# EMAIL_USE_TLS = True  # Use TLS (True/False based on your email provider)
-# EMAIL_USE_SSL = False  # Use SSL (True/False based on your email provider)
-# EMAIL_HOST_USER = config('EMAIL_HOST_USER')
-# EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
-# DEFAULT_FROM_EMAIL = config('EMAIL_HOST_USER')  # Sender's email address
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'  # Specify your SMTP server
+EMAIL_PORT = 587  # Port for sending emails (use 587 for TLS, 465 for SSL)
+EMAIL_USE_TLS = True  # Use TLS (True/False based on your email provider)
+EMAIL_USE_SSL = False  # Use SSL (True/False based on your email provider)
+EMAIL_HOST_USER = config('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
+DEFAULT_FROM_EMAIL = config('EMAIL_HOST_USER')  # Sender's email address
 
 # APPEND_SLASH=False
 
