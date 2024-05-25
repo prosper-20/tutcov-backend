@@ -253,10 +253,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # APPEND_SLASH=False
 
-# DEFAULT_FROM_EMAIL = config("DEFAULT_FROM_EMAIL")
-# EMAIL_BACKEND = "sendgrid_backend.SendgridBackend"
-# SENDGRID_SANDBOX_MODE_IN_DEBUG = False
-# SENDGRID_API_KEY = config("NEW_SENDGRID_API_KEY")
+DEFAULT_FROM_EMAIL = config("DEFAULT_FROM_EMAIL")
+EMAIL_BACKEND = "sendgrid_backend.SendgridBackend"
+SENDGRID_SANDBOX_MODE_IN_DEBUG = False
+SENDGRID_API_KEY = config("NEW_SENDGRID_API_KEY")
 
 # DEFAULT_FROM_EMAIL = config("DEFAULT_FROM_EMAIL")
 # EMAIL_BACKEND = "sendgrid_backend.SendgridBackend"
@@ -265,12 +265,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 
-# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-# EMAIL_HOST = 'smtp.gmail.com'
-# EMAIL_HOST_USER = config('MY_EMAIL')
-# EMAIL_HOST_PASSWORD = config('MY_PASSWORD')
-# EMAIL_PORT = 587
-# EMAIL_DEBUG = True
-# EMAIL_USE_TLS = True
-# EMAIL_USE_SSL = False
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = config('MY_EMAIL')
+EMAIL_HOST_PASSWORD = config('MY_PASSWORD')
+EMAIL_PORT = 587
+EMAIL_DEBUG = True
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False
 
