@@ -25,12 +25,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-njr!v8g1qp09^a-w+e4gucn+!3%qfgt(ag96w^w+@=ytdj+iwb'
+# SECRET_KEY = 'django-insecure-njr!v8g1qp09^a-w+e4gucn+!3%qfgt(ag96w^w+@=ytdj+iwb'
+SECRET_KEY = os.environ.get("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get("DEBUG", "False").lower() == "true"
+#  The '== "true"' checks if the "DEBUG" value exists
 
-ALLOWED_HOSTS = ["localhost", "127.0.0.1", "*"]
+# ALLOWED_HOSTS = ["localhost", "127.0.0.1", "*"]
+ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS").split(" ")
+# create an environment variable for ALLOWED_HOSTS which is separated by " "
 
 # /manage.py spectacular --file schema.yml
 # Application definition
@@ -153,7 +157,13 @@ DATABASES = {
 }
 
 
-DATABASES['default'] = dj_database_url.parse("postgres://tutcov_user:0RdsS2TrlF47jK03bBYHi8djODA5x1ez@dpg-cp7niao21fec73dm5d0g-a.oregon-postgres.render.com/tutcov")
+# DATABASES['default'] = dj_database_url.parse("postgres://tutcov_user:0RdsS2TrlF47jK03bBYHi8djODA5x1ez@dpg-cp7niao21fec73dm5d0g-a.oregon-postgres.render.com/tutcov")
+# External database link to connect when hosting outside of render
+# DATABASES["default"] = dj_database_url.parse("postgres://tutcov_team:ZvUIHJQaRQ0fROb0BBNioSImRB99Hn6T@dpg-cp8rngsf7o1s739nj28g-a.oregon-postgres.render.com/tutcov_pgrs_db")
+
+# Internal link connection
+DATABASE_URL = os.environ.get("DATABASE_URL")
+DATABASES["default"] = dj_database_url.parse(DATABASE_URL)
 
 
 CACHES = {
@@ -243,10 +253,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # APPEND_SLASH=False
 
-DEFAULT_FROM_EMAIL = config("DEFAULT_FROM_EMAIL")
-EMAIL_BACKEND = "sendgrid_backend.SendgridBackend"
-SENDGRID_SANDBOX_MODE_IN_DEBUG = False
-SENDGRID_API_KEY = config("NEW_SENDGRID_API_KEY")
+# DEFAULT_FROM_EMAIL = config("DEFAULT_FROM_EMAIL")
+# EMAIL_BACKEND = "sendgrid_backend.SendgridBackend"
+# SENDGRID_SANDBOX_MODE_IN_DEBUG = False
+# SENDGRID_API_KEY = config("NEW_SENDGRID_API_KEY")
 
 # DEFAULT_FROM_EMAIL = config("DEFAULT_FROM_EMAIL")
 # EMAIL_BACKEND = "sendgrid_backend.SendgridBackend"
@@ -255,12 +265,12 @@ SENDGRID_API_KEY = config("NEW_SENDGRID_API_KEY")
 
 
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = config('MY_EMAIL')
-EMAIL_HOST_PASSWORD = config('MY_PASSWORD')
-EMAIL_PORT = 587
-EMAIL_DEBUG = True
-EMAIL_USE_TLS = True
-EMAIL_USE_SSL = False
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = 'smtp.gmail.com'
+# EMAIL_HOST_USER = config('MY_EMAIL')
+# EMAIL_HOST_PASSWORD = config('MY_PASSWORD')
+# EMAIL_PORT = 587
+# EMAIL_DEBUG = True
+# EMAIL_USE_TLS = True
+# EMAIL_USE_SSL = False
 
