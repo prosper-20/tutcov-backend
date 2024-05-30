@@ -169,16 +169,16 @@ DATABASE_URL = os.environ.get("DATABASE_URL")
 DATABASES["default"] = dj_database_url.parse(DATABASE_URL)
 
 
-CACHES = {
-    "default": {
-        "BACKEND": "django_redis.cache.RedisCache",
-        # format: redis://redis-container-name:port/db-number
-        "LOCATION": "redis://localhost:6379/1",
-        "OPTIONS": {
-            "CLIENT_CLASS": "django_redis.client.DefaultClient",
-        },
-    }
-}
+# CACHES = {
+#     "default": {
+#         "BACKEND": "django_redis.cache.RedisCache",
+#         # format: redis://redis-container-name:port/db-number
+#         "LOCATION": "redis://localhost:6379/1",
+#         "OPTIONS": {
+#             "CLIENT_CLASS": "django_redis.client.DefaultClient",
+#         },
+#     }
+# }
 
 # CHANNEL_LAYERS = {
 #     'default': {
