@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     'rest_framework',
     "drf_spectacular",
     'drf_yasg',
+    'corsheaders',
 ]
 
 REST_FRAMEWORK = {
@@ -114,7 +115,15 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
+
+CORS_ALLOWED_ORIGINS = [
+    "localhost",
+    "tutcov-backend.onrender.com",
+]
+
+CORS_ALLOW_CREDENTIALS = True
 
 ROOT_URLCONF = 'pqhub.urls'
 
