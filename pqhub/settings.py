@@ -28,14 +28,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 # SECRET_KEY = 'django-insecure-njr!v8g1qp09^a-w+e4gucn+!3%qfgt(ag96w^w+@=ytdj+iwb'
-SECRET_KEY = os.environ.get("SECRET_KEY")
+SECRET_KEY = config("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get("DEBUG", "False").lower() == "true"
 #  The '== "true"' checks if the "DEBUG" value exists
 
 # ALLOWED_HOSTS = ["localhost", "127.0.0.1", "*"]
-ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS").split(" ")
+ALLOWED_HOSTS = config("ALLOWED_HOSTS").split(" ")
 # create an environment variable for ALLOWED_HOSTS which is separated by " "
 
 # /manage.py spectacular --file schema.yml
@@ -119,8 +119,8 @@ MIDDLEWARE = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    "localhost:3000",
-    "tutcov-backend.onrender.com",
+    "http://localhost:3000",
+    "https://tutcov-backend.onrender.com",
 ]
 
 CORS_ALLOW_CREDENTIALS = True

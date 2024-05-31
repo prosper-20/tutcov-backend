@@ -13,14 +13,57 @@ from django.utils.text import slugify
 from django.conf import settings
 import secrets
 
+
+class Department(models.Model):
+    name = models.CharField(max_length=100)
+    slug = models.SlugField(max_length=100, blank=True, null=True)
+
+    def __str__(self):
+        return self.name
+    
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.name)
+        super().save(*args, **kwargs)
+
+
+class Faculty(models.Model):
+    name = models.CharField(max_length=200)
+    slug = models.SlugField(max_length=200, blank=True, null=True)
+
+    class Meta:
+        verbose_name_plural = 'Faculties'
+
+    def __str__(self):
+        return self.name
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.name)
+        super().save(*args, **kwargs)
+
+YEAR = (
+    ("100 Level", "100 Level"),
+    ("200 Level", "200 Level"),
+    ("300 Level", "300 Level"),
+    ("400 Level", "400 Level"),
+    ("500 Level", "500 Level")
+)
+
+
 class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(unique=True)
     username = models.CharField(max_length=30, unique=True) # I  removed the default
+    level = models.CharField(max_length=50, blank=True, choices=YEAR)
+    country = models.CharField(max_length=100, default="Nigeria")
+    faculty = models.ForeignKey(Faculty, on_delete=models.CASCADE, blank=True, null=True)
+    department = models.ForeignKey(Department, on_delete=models.CASCADE, blank=True, null=True)
     is_active = models.BooleanField(default=True)
     is_lecturer = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
     date_joined = models.DateTimeField(default=timezone.now)
+
 
     objects = UserManager()
 
@@ -107,42 +150,6 @@ class Token(models.Model):
     def is_refresh_token_expired(self):
         return timezone.now() >= self.refresh_token_expires_at
 
-
-YEAR = (
-    ("100 Level", "100 Level"),
-    ("200 Level", "200 Level"),
-    ("300 Level", "300 Level"),
-    ("400 Level", "400 Level"),
-    ("500 Level", "500 Level")
-)
-
-class Department(models.Model):
-    name = models.CharField(max_length=100)
-    slug = models.SlugField(max_length=100, blank=True, null=True)
-
-    def __str__(self):
-        return self.name
-    
-    def save(self, *args, **kwargs):
-        if not self.slug:
-            self.slug = slugify(self.name)
-        super().save(*args, **kwargs)
-
-
-class Faculty(models.Model):
-    name = models.CharField(max_length=200)
-    slug = models.SlugField(max_length=200, blank=True, null=True)
-
-    class Meta:
-        verbose_name_plural = 'Faculties'
-
-    def __str__(self):
-        return self.name
-
-    def save(self, *args, **kwargs):
-        if not self.slug:
-            self.slug = slugify(self.name)
-        super().save(*args, **kwargs)
 
 
 class EmailOTPToken(models.Model):
