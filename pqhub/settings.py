@@ -119,7 +119,7 @@ MIDDLEWARE = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    "localhost",
+    "localhost:3000",
     "tutcov-backend.onrender.com",
 ]
 
