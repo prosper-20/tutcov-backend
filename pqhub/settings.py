@@ -167,25 +167,26 @@ DATABASE_URL = os.environ.get("DATABASE_URL")
 DATABASES["default"] = dj_database_url.parse(DATABASE_URL)
 
 
-# CACHES = {
-#     "default": {
-#         "BACKEND": "django_redis.cache.RedisCache",
-#         # format: redis://redis-container-name:port/db-number
-#         "LOCATION": "redis://localhost:6379/1",
-#         "OPTIONS": {
-#             "CLIENT_CLASS": "django_redis.client.DefaultClient",
-#         },
-#     }
-# }
-#
-# CHANNEL_LAYERS = {
-#     'default': {
-#     'BACKEND': 'channels_redis.core.RedisChannelLayer',
-#     'CONFIG': {
-#     'hosts': [('127.0.0.1', 6379)],
-#     },
-#     },
-# }
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        # format: redis://redis-container-name:port/db-number
+        # "LOCATION": "redis://localhost:6379/1",
+        "LOCATION": "redis://red-cpcba0njbltc73ac1tpg:6379"
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        },
+    }
+}
+
+CHANNEL_LAYERS = {
+    'default': {
+    'BACKEND': 'channels_redis.core.RedisChannelLayer',
+    'CONFIG': {
+    'hosts': [('red-cpcba0njbltc73ac1tpg', 6379)],
+    },
+    },
+}
 
 
 # Password validation
