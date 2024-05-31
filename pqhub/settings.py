@@ -14,6 +14,8 @@ from datetime import timedelta
 from pathlib import Path
 import os
 import dj_database_url
+import asyncio
+import aioredis
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,12 +27,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-njr!v8g1qp09^a-w+e4gucn+!3%qfgt(ag96w^w+@=ytdj+iwb'
+# SECRET_KEY = 'django-insecure-njr!v8g1qp09^a-w+e4gucn+!3%qfgt(ag96w^w+@=ytdj+iwb'
+SECRET_KEY = os.environ.get("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get("DEBUG", "False").lower() == "true"
+#  The '== "true"' checks if the "DEBUG" value exists
 
-ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
+# ALLOWED_HOSTS = ["localhost", "127.0.0.1", "*"]
+ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS").split(" ")
+# create an environment variable for ALLOWED_HOSTS which is separated by " "
 
 # /manage.py spectacular --file schema.yml
 # Application definition
@@ -49,6 +55,7 @@ INSTALLED_APPS = [
     'rest_framework',
     "drf_spectacular",
     'drf_yasg',
+    'corsheaders',
 ]
 
 REST_FRAMEWORK = {
@@ -101,13 +108,23 @@ SIMPLE_JWT = {
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
+
+CORS_ALLOWED_ORIGINS = [
+    "localhost:3000",
+    "tutcov-backend.onrender.com",
+]
+
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_ALL_ORIGINS = True
 
 ROOT_URLCONF = 'pqhub.urls'
 
@@ -153,14 +170,15 @@ DATABASES = {
 }
 
 
-# DATABASES['default'] = dj_database_url.parse("postgres://tutcov_user:0RdsS2TrlF47jK03bBYHi8djODA5x1ez@dpg-cp7niao21fec73dm5d0g-a.oregon-postgres.render.com/tutcov")
+DATABASES['default'] = dj_database_url.parse("postgres://tutcov_user:0RdsS2TrlF47jK03bBYHi8djODA5x1ez@dpg-cp7niao21fec73dm5d0g-a.oregon-postgres.render.com/tutcov")
 
 
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
         # format: redis://redis-container-name:port/db-number
-        "LOCATION": "redis://localhost:6379/1",
+        # "LOCATION": "redis://localhost:6379/1",
+        "LOCATION": "redis://red-cpcba0njbltc73ac1tpg:6379",
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         },
@@ -171,7 +189,7 @@ CHANNEL_LAYERS = {
     'default': {
     'BACKEND': 'channels_redis.core.RedisChannelLayer',
     'CONFIG': {
-    'hosts': [('127.0.0.1', 6379)],
+    'hosts': [('red-cpcba0njbltc73ac1tpg', 6379)],
     },
     },
 }
@@ -215,6 +233,16 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = 'static/'
+# Tell Django to copy static assets into a path called `staticfiles` (this is specific to Render)
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+# Enable the WhiteNoise storage backend, which compresses static files to reduce disk use
+# and renames the files with unique names for each version to support long-term caching
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+STATICFILES_DIR = [
+    os.path.join(BASE_DIR, 'static'),
+]
 
 MEDIA_URL = "media/"
 
@@ -237,10 +265,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # APPEND_SLASH=False
 
-DEFAULT_FROM_EMAIL = config("DEFAULT_FROM_EMAIL")
-EMAIL_BACKEND = "sendgrid_backend.SendgridBackend"
-SENDGRID_SANDBOX_MODE_IN_DEBUG = False
-SENDGRID_API_KEY = config("NEW_SENDGRID_API_KEY")
+# DEFAULT_FROM_EMAIL = config("DEFAULT_FROM_EMAIL")
+# EMAIL_BACKEND = "sendgrid_backend.SendgridBackend"
+# SENDGRID_SANDBOX_MODE_IN_DEBUG = False
+# SENDGRID_API_KEY = config("NEW_SENDGRID_API_KEY")
 
 # DEFAULT_FROM_EMAIL = config("DEFAULT_FROM_EMAIL")
 # EMAIL_BACKEND = "sendgrid_backend.SendgridBackend"
@@ -249,12 +277,25 @@ SENDGRID_API_KEY = config("NEW_SENDGRID_API_KEY")
 
 
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = config('MY_EMAIL')
-EMAIL_HOST_PASSWORD = config('MY_PASSWORD')
-EMAIL_PORT = 587
-EMAIL_DEBUG = True
-EMAIL_USE_TLS = True
-EMAIL_USE_SSL = False
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = 'smtp.gmail.com'
+# EMAIL_HOST_USER = config('MY_EMAIL')
+# EMAIL_HOST_PASSWORD = config('MY_PASSWORD')
+# EMAIL_PORT = 587
+# EMAIL_DEBUG = True
+# EMAIL_USE_TLS = True
+# EMAIL_USE_SSL = False
 
+
+async def main():
+    # Connect to your internal Redis instance using the REDIS_URL environment variable
+    # The REDIS_URL is set to the internal Redis URL e.g. redis://red-343245ndffg023:6379
+    redis = aioredis.from_url(os.environ['REDIS_URL'])
+    await redis.set("my-key", "aioredis")
+    value = await redis.get("my-key")
+    print(value)
+
+
+if __name__ == "__main__":
+    asyncio.run(main())
+    
