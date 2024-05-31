@@ -174,7 +174,7 @@ CACHES = {
         "BACKEND": "django_redis.cache.RedisCache",
         # format: redis://redis-container-name:port/db-number
         # "LOCATION": "redis://localhost:6379/1",
-        "LOCATION": "redis://red-cpcba0njbltc73ac1tpg:6379"
+        "LOCATION": "redis://red-cpcba0njbltc73ac1tpg:6379",
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         },
