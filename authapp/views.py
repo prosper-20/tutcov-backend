@@ -280,17 +280,21 @@ class UserProfileView(APIView):
     def get(self, request, user_id, format=None, **kwargs):
         user = User.objects.get(email=request.user.email)
         profile = Profile.objects.get(user=user)
-        user_id = User.objects.get(id=request.user.id)
-        serializer = ProfileSerializer(profile)
+        # user_id = User.objects.get(id=user_id)
         
-        # Retrieve the access token from the Authorization header
-        auth_header = request.META.get('HTTP_AUTHORIZATION')
-        if auth_header and auth_header.startswith('Bearer '):
-            a_token = auth_header[len('Bearer '):]
-            access_token = AccessToken(a_token)
-        else:
-            return Response({'error': 'Invalid access token or user not authenticated'}, status=status.HTTP_401_UNAUTHORIZED)
-            
+        if user_id == user.id:
+            try:
+                serializer = ProfileSerializer(profile)
+        
+                # Retrieve the access token from the Authorization header
+                auth_header = request.META.get('HTTP_AUTHORIZATION')
+                if auth_header and auth_header.startswith('Bearer '):
+                    a_token = auth_header[len('Bearer '):]
+                    access_token = AccessToken(a_token)
+                else:
+                    return Response({'error': 'Invalid access token or user not authenticated'}, status=status.HTTP_401_UNAUTHORIZED)
+            except:
+                return Response({'error': 'You do not have permmission to access this view.'}, status=status.HTTP_403_FORBIDDEN)
         return Response({'serializer': serializer.data, 'user_id': user_id, 'access_token': access_token}, status=status.HTTP_200_OK)
     
     def put(self, request, format=None, **kwargs):
