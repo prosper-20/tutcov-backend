@@ -291,11 +291,11 @@ class UserProfileView(APIView):
                 if auth_header and auth_header.startswith('Bearer '):
                     a_token = auth_header[len('Bearer '):]
                     access_token = AccessToken(a_token)
+                    return Response({'serializer': serializer.data, 'user_id': user_id, 'access_token': access_token}, status=status.HTTP_200_OK)
                 else:
                     return Response({'error': 'Invalid access token or user not authenticated'}, status=status.HTTP_401_UNAUTHORIZED)
             except:
                 return Response({'error': 'You do not have permmission to access this view.'}, status=status.HTTP_403_FORBIDDEN)
-        return Response({'serializer': serializer.data, 'user_id': user_id, 'access_token': access_token}, status=status.HTTP_200_OK)
     
     def put(self, request, format=None, **kwargs):
         """The user gets to view and edit their information on the application."""
