@@ -277,11 +277,21 @@ class UserProfileView(APIView):
     """Only authenticated users can access this page."""
     permission_classes = [IsAuthenticated]
 
-    def get(self, request, format=None, **kwargs):
+    def get(self, request, user_id, format=None, **kwargs):
         user = User.objects.get(email=request.user.email)
         profile = Profile.objects.get(user=user)
+        user_id = User.objects.get(id=request.user.id)
         serializer = ProfileSerializer(profile)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        
+        # Retrieve the access token from the Authorization header
+        auth_header = request.META.get('HTTP_AUTHORIZATION')
+        if auth_header and auth_header.startswith('Bearer '):
+            a_token = auth_header[len('Bearer '):]
+            access_token = AccessToken(a_token)
+        else:
+            return Response({'error': 'Invalid access token or user not authenticated'}, status=status.HTTP_401_UNAUTHORIZED)
+            
+        return Response({'serializer': serializer.data, 'user_id': user_id, 'access_token': access_token}, status=status.HTTP_200_OK)
     
     def put(self, request, format=None, **kwargs):
         """The user gets to view and edit their information on the application."""
