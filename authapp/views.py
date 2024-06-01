@@ -289,8 +289,9 @@ class UserProfileView(APIView):
                 # Retrieve the access token from the Authorization header
                 auth_header = request.META.get('HTTP_AUTHORIZATION')
                 if auth_header and auth_header.startswith('Bearer '):
-                    a_token = auth_header[len('Bearer '):]
-                    access_token = AccessToken(a_token)
+                    # a_token = auth_header[len('Bearer '):]
+                    # access_token = AccessToken(a_token)
+                    access_token = auth_header['Bearer']
                     return Response({'serializer': serializer.data, 'user_id': user_id, 'access_token': access_token}, status=status.HTTP_200_OK)
                 else:
                     return Response({'error': 'Invalid access token or user not authenticated'}, status=status.HTTP_401_UNAUTHORIZED)
